@@ -4,52 +4,54 @@
 
 class Cursur {
 public:
-    Cursur(const char &icon,const int &width, const int &height) {
-        m_icon = icon;
-        m_width = width;
-        m_height = height;
-        m_x=0;
-        m_y=0;
-        m_on = true;
-        m_cntr = 0;
-        m_toggle_limit = 1000000;
-    }
-
-    void update(const std::string &ctrl) {
-        if(ctrl=="toggle") {
-            m_on = !m_on;
-            m_cntr = 0;
-        }
-        else if(ctrl=="left") {
-            m_cntr = 0;
-            m_on = true;
-            if(--m_x<0)
-                m_x=m_width-1;
-        }
-        else if(ctrl=="right") {
-            m_cntr = 0;
-            m_on = true;
-            m_x = (m_x+1)%-m_width;
-        }
-        else if(ctrl=="up") {
-            m_cntr = 0;
-            m_on = true;
-            if(--m_y<0)
-                m_y=m_height-1;
-        }
-        else if(ctrl=="down") {
-            m_cntr = 0;
-            m_on = true;
-            m_y = (m_y+1)%-m_height;
-        }
-    }
-
-    char m_icon;
-    int m_width, m_height;
-    int m_x,m_y;
-    bool m_on;
-    int m_cntr;
-    int m_toggle_limit;
+    Cursur(const char &icon,const int &width, const int &height);
+    void update(const std::string &ctrl);
+    char icon;
+    int width, height;
+    int x,y;
+    bool on;
+    int cntr;
+    int toggle_limit;
 };
+
+Cursur::Cursur(const char &icon,const int &width, const int &height) {
+    this->icon = icon;
+    this->width = width;
+    this->height = height;
+    x=0;
+    y=0;
+    on = true;
+    cntr = 0;
+    toggle_limit = 1000000;
+}
+
+void Cursur::update(const std::string &ctrl) {
+    if(ctrl=="toggle") {
+        on = !on;
+        cntr = 0;
+    }
+    else if(ctrl=="left") {
+        cntr = 0;
+        on = true;
+        if(--x<0)
+            x=width-1;
+    }
+    else if(ctrl=="right") {
+        cntr = 0;
+        on = true;
+        x = (x+1)%-width;
+    }
+    else if(ctrl=="up") {
+        cntr = 0;
+        on = true;
+        if(--y<0)
+            y=height-1;
+    }
+    else if(ctrl=="down") {
+        cntr = 0;
+        on = true;
+        y = (y+1)%-height;
+    }
+}
 
 #endif

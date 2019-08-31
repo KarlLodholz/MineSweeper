@@ -1,7 +1,7 @@
 #include "field.h"
-#include <iostream>
 
 int main(int argc, char** argv) {
+    srand (time(NULL));
     std::string input;
     int width = 10;
     int height = 10;
@@ -16,10 +16,10 @@ int main(int argc, char** argv) {
     Cursur c('o',width,height);
 
     do {
-        if(f.m_update)
+        if(f.update)
             f.print(c);
         if(_kbhit()) {
-            f.m_update = true;
+            f.update = true;
             input = std::getchar(); //you might want to clear the buffer at this point
             if(input=="w")
                 c.update("up");
@@ -29,13 +29,15 @@ int main(int argc, char** argv) {
                 c.update("left");
             if(input=="d")
                 c.update("right");
+            if(input==" ")
+                f.mine(c);
             if(input=="q") 
                 exit = true;
         }
         //usleep(REFRESH_RATE);
-        if(++c.m_cntr==c.m_toggle_limit) {
+        if(++c.cntr==c.toggle_limit) {
+            f.update = true;
             c.update("toggle");
-            f.m_update = true;
         }
     } while(!exit);
     printf("\nDone\n");
