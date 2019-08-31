@@ -8,7 +8,7 @@ public:
     void update(const std::string &ctrl);
     char icon;
     int width, height;
-    int x,y;
+    int pos;
     bool on;
     int cntr;
     int toggle_limit;
@@ -18,8 +18,7 @@ Cursur::Cursur(const char &icon,const int &width, const int &height) {
     this->icon = icon;
     this->width = width;
     this->height = height;
-    x=0;
-    y=0;
+    pos = 0;
     on = true;
     cntr = 0;
     toggle_limit = 1000000;
@@ -33,24 +32,28 @@ void Cursur::update(const std::string &ctrl) {
     else if(ctrl=="left") {
         cntr = 0;
         on = true;
-        if(--x<0)
-            x=width-1;
+        if(--pos % width <= width - 1 && (pos + 1) % width == 0)
+            pos += width;
     }
     else if(ctrl=="right") {
         cntr = 0;
         on = true;
-        x = (x+1)%-width;
+        if(++pos % width == 0 && (pos - 1) % width == width - 1)
+            pos -= width; 
     }
     else if(ctrl=="up") {
         cntr = 0;
         on = true;
-        if(--y<0)
-            y=height-1;
+        pos -= width;
+        if(pos < 0)
+            pos += width*height;
     }
     else if(ctrl=="down") {
         cntr = 0;
         on = true;
-        y = (y+1)%-height;
+        pos += width;
+        if(pos>=width*height)
+            pos -= width*height;
     }
 }
 

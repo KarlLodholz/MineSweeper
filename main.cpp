@@ -31,8 +31,11 @@ int main(int argc, char** argv) {
                 c.update("right");
             if(input==" ")
                 f.mine(c);
-            if(input=="q") 
+            if(input=="q") {
                 exit = true;
+                std::cout<<c.pos;
+                std::cout.flush();
+            }
         }
         //usleep(REFRESH_RATE);
         if(++c.cntr==c.toggle_limit) {
