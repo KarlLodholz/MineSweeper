@@ -103,20 +103,20 @@ void Field::mine(const int &pos) {
             //you lose probably
         }
         else if(f[pos].stuff == ' ') {
-            bool up,down,left,right,valid;
-            if(pos/width-1 >= 0) {          //up
+            bool up = false, down = false, left = false, right = false;
+            if((pos/width)-1 >= 0) {          //up
                 up = true;
                 mine(pos-width);
             }
-            if(pos/width+1 < height) {      //down
+            if((pos/width)+1 < height) {      //down
                 down = true;
                 mine(pos+width);
             }
-            if(pos%width-1 >= 0) {          //left
+            if((pos%width)-1 >= 0) {          //left
                 left = true;
                 mine(pos-1);
             }
-            if(pos%width+1 < width) {       //right
+            if((pos%width)+1 < width) {       //right
                 right = true;
                 mine(pos+1);
             }
@@ -131,21 +131,21 @@ void Field::mine(const int &pos) {
         }
         else if(f[pos].stuff == '!') {
             int cntr = 0;
-            bool up,down,left,right,valid;
+            bool up = false, down = false, left = false, right = false ,valid;
             std::vector<int> a;
-            if(pos/width-1 >= 0) {          //up
+            if(pos/width - 1 >= 0) {          //up
                 up = true;
                 a.push_back(pos-width);
             }
-            if(pos/width+1 < height) {      //down
+            if(pos/width + 1 < height) {      //down
                 down = true;
                 a.push_back(pos+width);
             }
-            if(pos%width-1 >= 0) {          //left
+            if((pos%width) - 1 >= 0) {        //left
                 left = true;
                 a.push_back(pos-1);
             }
-            if(pos%width+1 < width) {       //right
+            if((pos%width) + 1 < width) {     //right
                 right = true;
                 a.push_back(pos+1);
             }
