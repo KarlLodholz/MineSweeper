@@ -44,15 +44,16 @@ public:
     bool update;
     Field(const int &width, const int &height);
     ~Field();
-    void mine(Cursur &c);
+    void mine(const int &pos);
     void print(Cursur &c);
     //array of mines and stuffs later
 
 private:
     const int refresh_rate = 1500;
     int width,height;
-    char unmined = '-';
-    char border = '#';
+    static const char UNMINED = '-';
+    static const char BORDER = '#';
+    static const char MINE = 'x';
     int safe_moves = -1;
     int num_mines;
 };
@@ -61,7 +62,12 @@ Field::Field(const int &width, const int &height) {
     this->width = width;
     this->height = height;
     update = true;
-    f = new Position[width*height];
+    f = new Position[width*height]();
+    //the positions must be initalized now because dynamically allocated arrays of objects dont use the overwritten constructor
+    for(int i = 0; i < width*height; i++) {
+        f[i].stuff = '!';
+        f[i].mined = false;
+    }
     num_mines = width*height/10;
 }
 
@@ -72,80 +78,173 @@ Field::~Field() {
 void Field::print(Cursur &c) {
     clr();
     for(int i=0;i<width+2;i++)
-        std::cout<<border;
+        std::cout<<BORDER;
     std::cout<<"\n";
-    for(int y=0;y<height;y++) {
-        std::cout<<border;
-        if(c.pos/width == y) //this check reduced number of checks done overall
-            for(int x=0;x<width;x++) {
-                std::cout<< (c.pos%width == x && c.on ? c.icon : (f[y*width+x].mined ? f[y*width+x].stuff : unmined));
-            }
+    for(int i = 0; i < height*width; i++) {
+        if(i%width == 0) {
+            std::cout << BORDER;
+        }
+        if(c.pos == i && c.on) {
+            std::cout << c.icon;
+        }
         else {
-            for(int x=0;x<width;x++) {
-                std::cout<<(f[y*width+x].mined ? f[y*width+x].stuff : unmined);
+            if(f[i].mined) {
+                std::cout << f[i].stuff;
+            }
+            else {
+                std::cout << UNMINED;
             }
         }
-        std::cout<<border<<"\n";
-    }
+        if(i%width == width-1) {
+            std::cout << BORDER << "\n";
+        }
+    }   
     for(int i=0;i<width+2;i++)
-        std::cout<<border;
+        std::cout<<BORDER;
+
+    // for(int y=0;y<height;y++) {
+    //     std::cout<<BORDER;
+    //     if(c.pos/width == y) //this check reduced number of checks done overall
+    //         for(int x=0;x<width;x++) {
+    //             std::cout<< (c.pos%width == x && c.on ? c.icon : (f[y*width+x].mined ? f[y*width+x].stuff : UNMINED));
+    //         }
+    //     else {
+    //         for(int x=0;x<width;x++) {
+    //             std::cout<<(f[y*width+x].mined ? f[y*width+x].stuff : UNMINED);
+    //         }
+    //     }
+    //     std::cout<<BORDER<<"\n";
+    // }
+    // for(int i=0;i<width+2;i++)
+    //     std::cout<<BORDER;
     std::cout.flush();
     update = false;
     return;
 }
 
-void Field::mine(Cursur &c) {
-    if(!f[c.pos].mined) {
-        f[c.pos].mined = true;
-        if(f[c.pos].stuff == 'x') {
-            
+void Field::mine(const int &pos) {
+    if(!f[pos].mined) {
+        f[pos].mined = true;
+        if(f[pos].stuff == MINE) {
+            //you lose probably
         }
-        else if(f[c.pos].stuff <= '8' && f[c.pos].stuff >='0') {
-            
+        else if(f[pos].stuff == ' ') {
+            bool up,down,left,right,valid;
+            if(pos/width-1 >= 0) {          //up
+                up = true;
+                mine(pos-width);
+            }
+            if(pos/width+1 < height) {      //down
+                down = true;
+                mine(pos+width);
+            }
+            if(pos%width-1 >= 0) {          //left
+                left = true;
+                mine(pos-1);
+            }
+            if(pos%width+1 < width) {       //right
+                right = true;
+                mine(pos+1);
+            }
+            if(left && up)
+                mine(pos - width - 1);
+            if(right && up)
+                mine(pos - width + 1);
+            if(left && down)
+                mine(pos + width - 1);
+            if(right && down)
+                mine(pos + width + 1);
         }
-        else {
+        else if(f[pos].stuff == '!') {
             int cntr = 0;
             bool up,down,left,right,valid;
             std::vector<int> a;
-            if(c.pos/width-1 >= 0) {          //up
+            if(pos/width-1 >= 0) {          //up
                 up = true;
-                a.push_back(c.pos-width);
+                a.push_back(pos-width);
             }
-            if(c.pos/width+1 < height) {      //down
+            if(pos/width+1 < height) {      //down
                 down = true;
-                a.push_back(c.pos+width);
+                a.push_back(pos+width);
             }
-            if(c.pos%width-1 >= 0) {          //left
+            if(pos%width-1 >= 0) {          //left
                 left = true;
-                a.push_back(c.pos-1);
+                a.push_back(pos-1);
             }
-            if(c.pos%width+1 < width) {       //right
+            if(pos%width+1 < width) {       //right
                 right = true;
-                a.push_back(c.pos+1);
+                a.push_back(pos+1);
             }
             if(left && up)
-                a.push_back(c.pos - width - 1);
+                a.push_back(pos - width - 1);
             if(right && up)
-                a.push_back(c.pos - width + 1);
+                a.push_back(pos - width + 1);
             if(left && down)
-                a.push_back(c.pos + width - 1);
+                a.push_back(pos + width - 1);
             if(right && down)
-                a.push_back(c.pos + width + 1);
+                a.push_back(pos + width + 1);
             
-            int pos;
+            int p;
 
             while(cntr < num_mines) {
                 up = down = left = right = false;
                 valid = true;
-                pos = rand()%(width*height);
+                p = rand()%(width*height);
                 for(int i=0;i<a.size();i++)
-                    if(pos == a[i])
+                    if(p == a[i])
                         valid = false;
                 if(valid) {
-                    f[pos].stuff = 'x';
+                    f[p].stuff = 'x';
                     a.push_back(pos);
+                    cntr++;
                 }
             }
+            
+            for(int i = 0; i < width*height; i++) {
+                if(f[i].stuff != MINE) {
+                    f[i].stuff = '0';
+                    if(i/width-1 >= 0) {          //up
+                        up = true;
+                        if(f[i-width].stuff == MINE)
+                            f[i].stuff = (char)(f[i].stuff+1);
+                    }
+                    if(i/width+1 < height) {      //down
+                        down = true;
+                        if(f[i+width].stuff == MINE)
+                            f[i].stuff = (char)(f[i].stuff+1);
+                    }
+                    if(i%width-1 >= 0) {          //left
+                        left = true;
+                        if(f[i-1].stuff == MINE)
+                            f[i].stuff = (char)(f[i].stuff+1);
+                    }
+                    if(i%width+1 < width) {       //right
+                        right = true;
+                        if(f[i+1].stuff == MINE)
+                            f[i].stuff = (char)(f[i].stuff+1);
+                    }
+                    if(left && up) {
+                        if(f[i - width - 1].stuff == MINE)
+                            f[i].stuff = (char)(f[i].stuff+1);
+                    }
+                    if(right && up) {
+                        if(f[i - width + 1].stuff == MINE)
+                            f[i].stuff = (char)(f[i].stuff+1);
+                    }
+                    if(left && down) {
+                        if(f[i + width - 1].stuff == MINE)
+                            f[i].stuff = (char)(f[i].stuff+1);
+                    }
+                    if(right && down) {
+                        if(f[i + width + 1].stuff == MINE)
+                            f[i].stuff = (char)(f[i].stuff+1);
+                    }
+                    if(f[i].stuff == '0')
+                        f[i].stuff = ' ';
+                }
+            }
+            f[pos].mined = false;
+            mine(pos); //calls mine again because everything has been initialized
         }
     }
 }
