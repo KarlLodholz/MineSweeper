@@ -30,10 +30,10 @@ int main(int argc, char** argv) {
             if(input=="d")
                 c.update("right");
             if(input==" ")
-                f.mine(c);
+                f.mine(c.pos);
             if(input=="q") {
                 exit = true;
-                std::cout<<c.pos;
+                std::cout<<"";
                 std::cout.flush();
             }
         }

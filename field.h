@@ -77,46 +77,20 @@ Field::~Field() {
 
 void Field::print(Cursur &c) {
     clr();
-    for(int i=0;i<width+2;i++)
+    for(int i=0;i<2*width+3;i++)
         std::cout<<BORDER;
     std::cout<<"\n";
     for(int i = 0; i < height*width; i++) {
         if(i%width == 0) {
             std::cout << BORDER;
         }
-        if(c.pos == i && c.on) {
-            std::cout << c.icon;
-        }
-        else {
-            if(f[i].mined) {
-                std::cout << f[i].stuff;
-            }
-            else {
-                std::cout << UNMINED;
-            }
-        }
+        std::cout<<' '<<(c.pos == i && c.on ? c.icon : (f[i].mined ? f[i].stuff : UNMINED));
         if(i%width == width-1) {
-            std::cout << BORDER << "\n";
+            std::cout << " " << BORDER << "\n";
         }
     }   
-    for(int i=0;i<width+2;i++)
+    for(int i=0;i<2*width+3;i++)
         std::cout<<BORDER;
-
-    // for(int y=0;y<height;y++) {
-    //     std::cout<<BORDER;
-    //     if(c.pos/width == y) //this check reduced number of checks done overall
-    //         for(int x=0;x<width;x++) {
-    //             std::cout<< (c.pos%width == x && c.on ? c.icon : (f[y*width+x].mined ? f[y*width+x].stuff : UNMINED));
-    //         }
-    //     else {
-    //         for(int x=0;x<width;x++) {
-    //             std::cout<<(f[y*width+x].mined ? f[y*width+x].stuff : UNMINED);
-    //         }
-    //     }
-    //     std::cout<<BORDER<<"\n";
-    // }
-    // for(int i=0;i<width+2;i++)
-    //     std::cout<<BORDER;
     std::cout.flush();
     update = false;
     return;
