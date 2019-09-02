@@ -31,6 +31,8 @@ int main(int argc, char** argv) {
                 c.update("right");
             if(input==" ")
                 f.mine(c.pos);
+            if(input=="f")
+                exit = f.flag(c.pos);
             if(input=="q") {
                 exit = true;
                 std::cout<<"";

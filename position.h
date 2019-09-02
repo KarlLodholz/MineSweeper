@@ -1,17 +1,11 @@
 #ifndef POSITION_H
 #define POSITION_H
 
-class Position {
-public:
+struct Position {
     char stuff;
     bool mined;
-    // Position();
+    bool flagged;
 private:
 };
-
-// Position::Position() {
-//     bool mined = true;
-//     char stuff = '0';
-// }
 
 #endif
