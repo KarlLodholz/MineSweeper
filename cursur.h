@@ -21,7 +21,7 @@ Cursur::Cursur(const char &icon,const int &width, const int &height) {
     pos = 0;
     on = true;
     cntr = 0;
-    toggle_limit = 1000000;
+    toggle_limit = 500000;
 }
 
 void Cursur::update(const std::string &ctrl) {

@@ -39,10 +39,15 @@ int main(int argc, char** argv) {
                 std::cout.flush();
             }
         }
-        //usleep(REFRESH_RATE);
         if(++c.cntr==c.toggle_limit) {
             f.update = true;
             c.update("toggle");
+        }
+        f.t2 = std::chrono::high_resolution_clock::now();
+        f.time_span = std::chrono::duration_cast<std::chrono::duration<int>>(f.t2 - f.t1);
+        if(f.m_time != (int)(f.time_span.count())) {
+            f.m_time = (int)(f.time_span.count());
+            f.update = true;
         }
     } while(!exit);
     printf("\nDone\n");

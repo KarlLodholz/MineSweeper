@@ -10,6 +10,8 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <time.h>
+#include <chrono>
+#include <ctime>
 #include <vector>
 
 int _kbhit() {
@@ -42,6 +44,10 @@ class Field {
 public:
     Position *f;
     bool update;
+    int m_time = 0;
+    std::chrono::high_resolution_clock::time_point t1;
+    std::chrono::high_resolution_clock::time_point t2;
+    std::chrono::duration<int> time_span;
     Field(const int &width, const int &height);
     ~Field();
     void mine(const int &pos);
@@ -50,12 +56,11 @@ public:
     //array of mines and stuffs later
 
 private:
-    const int refresh_rate = 1500;
     int width,height;
     static const char UNMINED = '-';
     static const char BORDER = '#';
     static const char MINE = 'x';
-    static const char FLAG = 'F';
+    static const char FLAG = '#';
     int safe_moves = -1;
     int num_mines;
     std::vector<int> flags;
@@ -80,7 +85,19 @@ Field::~Field() {
 }
 
 void Field::print(Cursur &c) {
+    //i dont use endl because that would result in the the input have to be printed at different incriments,
+    //so instead I flush everything out at the end of the function
     clr();
+    std::cout<<"Flags:"<< (num_mines- (int)flags.size());  //the static cast of arr.size() is necissary because size returns an unsigned int
+    std::string str = "";
+    int len = 1;
+    int x = (num_mines- (int)flags.size());
+    while (x /= 10)
+        len++;
+    int size = width*2+3-6-len-5;
+    for(int i=0;i<size; i++)
+        str += " ";
+    std::cout<<str<<"Time:"<<(f[0].stuff == '!' ? 0 : m_time)<<"\n";
     for(int i=0;i<2*width+3;i++)
         std::cout<<BORDER;
     std::cout<<"\n";
@@ -110,6 +127,7 @@ bool Field::flag(const int &pos) {
             if(flags[i] == pos) {
                 flags[i] == flags[flags.size()-1];
                 flags.pop_back();
+                flags.shrink_to_fit();
                 break;
             }
     }
@@ -250,6 +268,7 @@ void Field::mine(const int &pos) {
                 }
             }
             f[pos].mined = false;
+            t1 = std::chrono::high_resolution_clock::now();
             mine(pos); //calls mine again because everything has been initialized
         }
     }
