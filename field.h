@@ -77,6 +77,7 @@ Field::Field(const int &width, const int &height) {
         f[i].flagged = false;
         f[i].mined = false;
     }
+    
     num_mines = width*height/10;
 }
 
@@ -97,7 +98,7 @@ void Field::print(Cursur &c) {
     int size = width*2+3-6-len-5;
     for(int i=0;i<size; i++)
         str += " ";
-    std::cout<<str<<"Time:"<<(f[0].stuff == '!' ? 0 : m_time)<<"\n";
+    std::cout<<str<<"Time:"<<(f[0].stuff == '!' ? 0 : m_time)<<"\nNum_mines"<<num_mines<<"\nflags.size():"<<flags.size()<<"\n";
     for(int i=0;i<2*width+3;i++)
         std::cout<<BORDER;
     std::cout<<"\n";
@@ -123,18 +124,19 @@ bool Field::flag(const int &pos) {
         flags.push_back(pos);
     else {
         //sort through flags and take away the flag thats no supposed to be there
-        for(int i=0; i<flags.size(); i++)
+        for(int i=0; i<flags.size()-1; i++) {
             if(flags[i] == pos) {
                 flags[i] == flags[flags.size()-1];
-                flags.pop_back();
-                flags.shrink_to_fit();
                 break;
             }
+        }
+        flags.pop_back();
+        flags.shrink_to_fit();
     }
     bool won = false;
     if(flags.size() == num_mines) {
         won = true;
-        for(int i=0; i<flags.size(); i++){
+        for(int i=0; i<flags.size(); i++) {
             if(f[flags[i]].stuff != MINE)
                 won = false;
         }
@@ -216,8 +218,8 @@ bool Field::mine(const int &pos) {
                     if(p == a[i])
                         valid = false;
                 if(valid) {
-                    f[p].stuff = 'x';
-                    a.push_back(pos);
+                    f[p].stuff = MINE;
+                    a.push_back(p);
                     cntr++;
                 }
             }
