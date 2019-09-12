@@ -6,6 +6,7 @@ int main(int argc, char** argv) {
     int width = 10;
     int height = 10;
     bool exit = false;
+    bool lost = true;
     // char **field = new char*[width];
     // for(int i=0;i<width;i++)
     //     field[i] = new char[height];
@@ -30,9 +31,12 @@ int main(int argc, char** argv) {
             if(input=="d")
                 c.update("right");
             if(input==" ")
-                f.mine(c.pos);
-            if(input=="f")
+                exit = f.mine(c.pos);
+            if(input=="f") {
                 exit = f.flag(c.pos);
+                if(exit)
+                    lost = false;
+            }
             if(input=="q") {
                 exit = true;
                 std::cout<<"";
@@ -50,7 +54,7 @@ int main(int argc, char** argv) {
             f.update = true;
         }
     } while(!exit);
-    printf("\nDone\n");
+    std::cout << "\n" << (lost ? "You Lose" : "You Win") << std::endl;
 
     return 0;
 } 

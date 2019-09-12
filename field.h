@@ -50,7 +50,7 @@ public:
     std::chrono::duration<int> time_span;
     Field(const int &width, const int &height);
     ~Field();
-    void mine(const int &pos);
+    bool mine(const int &pos);
     bool flag(const int &pos);
     void print(Cursur &c);
     //array of mines and stuffs later
@@ -142,11 +142,11 @@ bool Field::flag(const int &pos) {
     return won;
 }
 
-void Field::mine(const int &pos) {
+bool Field::mine(const int &pos) {
     if(!f[pos].mined) {
         f[pos].mined = true;
         if(f[pos].stuff == MINE) {
-            //you lose probably
+            return true;
         }
         else if(f[pos].stuff == ' ') { // ' ' is considered a 0
             bool up = false, down = false, left = false, right = false;
@@ -272,5 +272,6 @@ void Field::mine(const int &pos) {
             mine(pos); //calls mine again because everything has been initialized
         }
     }
+    return false;
 }
 #endif
