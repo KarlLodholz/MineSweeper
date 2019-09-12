@@ -98,7 +98,7 @@ void Field::print(Cursur &c) {
     int size = width*2+3-6-len-5;
     for(int i=0;i<size; i++)
         str += " ";
-    std::cout<<str<<"Time:"<<(f[0].stuff == '!' ? 0 : m_time)<<"\nNum_mines"<<num_mines<<"\nflags.size():"<<flags.size()<<"\n";
+    std::cout<<str<<"Time:"<<(f[0].stuff == '!' ? 0 : m_time)<<"\n";
     for(int i=0;i<2*width+3;i++)
         std::cout<<BORDER;
     std::cout<<"\n";
