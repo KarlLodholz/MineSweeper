@@ -57,12 +57,14 @@ public:
 
 private:
     int width,height;
+    static const char ZERO = ' ';
     static const char UNMINED = '-';
     static const char BORDER = '#';
     static const char MINE = 'x';
     static const char FLAG = '#';
     int num_mines;
     std::vector<int> flags;
+    bool safeMoves();
 };
 
 Field::Field(const int &width, const int &height) {
@@ -149,12 +151,12 @@ bool Field::mine(const int &pos) {
     if(!f[pos].mined && !f[pos].flagged) {
         f[pos].mined = true;
         if(f[pos].stuff == MINE) {
-            // if(!safeMoves()) {
-                
-            // }
+            if(!safeMoves()) {
+                std::cout<<"unlucky"<<std::endl;
+            }
             return true;
         }
-        else if(f[pos].stuff == ' ') { // ' ' is considered a 0
+        else if(f[pos].stuff == ZERO) {
             bool up = false, down = false, left = false, right = false;
             if((pos/width)-1 >= 0) {          //up
                 up = true;
@@ -270,7 +272,7 @@ bool Field::mine(const int &pos) {
                             f[i].stuff = (char)(f[i].stuff+1);
                     }
                     if(f[i].stuff == '0')
-                        f[i].stuff = ' ';
+                        f[i].stuff = ZERO;
                 }
             }
 
@@ -279,6 +281,59 @@ bool Field::mine(const int &pos) {
             mine(pos); //calls mine again because everything has been initialized
         }
     }
+    return false;
+}
+
+bool Field::safeMoves() {
+    //calculates the number of safe moves
+    bool left,right,up,down;
+    int cntr;
+    for(int i = 0; i < width*height; i++) {
+        if(f[i].mined && f[i].stuff != ZERO) {
+            cntr = 0;
+            up = down = left = right = false;
+            if((i/width)-1 >= 0) {          //up
+                up = true;
+                if(!f[i-width].mined)
+                    cntr++;
+            }
+            if((i/width)+1 < height) {     //down
+                down = true;
+                if(!f[i+width].mined)
+                    cntr++;
+            }
+            if((i%width)-1 >= 0) {         //left
+                left = true;
+                if(!f[i-1].mined)
+                    cntr++;
+            }
+            if((i%width)+1 < width) {         //right
+                right = true;
+                if(!f[i+1].mined)
+                    cntr++;
+            }
+            if(up && left) {
+                if(!f[i-width-1].mined)
+                    cntr++;
+            }
+            if(up && right) {
+                if(!f[i-width+1].mined)
+                    cntr++;
+            }
+            if(down && left) {
+                if(!f[i+width-1].mined)
+                    cntr++;
+            }
+            if(down && right) {
+                if(!f[i+width+1].mined)
+                    cntr++;
+            }
+            if(cntr == (int)f[i].stuff-48)  // you have to subtact 48 because '0' - 48 == 0 because ascii table
+                return true;
+            //std::cout<<"\ncntr:"<<cntr<<" pos"<<i<<":"<<f[i].stuff;  
+        }
+    } 
+    std::cout.flush();
     return false;
 }
 #endif
