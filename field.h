@@ -61,7 +61,6 @@ private:
     static const char BORDER = '#';
     static const char MINE = 'x';
     static const char FLAG = '#';
-    int safe_moves = -1;
     int num_mines;
     std::vector<int> flags;
 };
@@ -99,6 +98,8 @@ void Field::print(Cursur &c) {
     for(int i=0;i<size; i++)
         str += " ";
     std::cout<<str<<"Time:"<<(f[0].stuff == '!' ? 0 : m_time)<<"\n";
+    
+    //Board 
     for(int i=0;i<2*width+3;i++)
         std::cout<<BORDER;
     std::cout<<"\n";
@@ -106,7 +107,7 @@ void Field::print(Cursur &c) {
         if(i%width == 0) {
             std::cout << BORDER;
         }
-        std::cout<<' '<<(c.pos == i && c.on ? c.icon : (f[i].flagged ? FLAG : (f[i].mined ? f[i].stuff : UNMINED)));
+        std::cout<<" "<<(c.pos == i && c.on ? c.icon : (f[i].flagged ? FLAG : (f[i].mined ? f[i].stuff : UNMINED)));
         if(i%width == width-1) {
             std::cout << " " << BORDER << "\n";
         }
@@ -145,9 +146,12 @@ bool Field::flag(const int &pos) {
 }
 
 bool Field::mine(const int &pos) {
-    if(!f[pos].mined) {
+    if(!f[pos].mined && !f[pos].flagged) {
         f[pos].mined = true;
         if(f[pos].stuff == MINE) {
+            // if(!safeMoves()) {
+                
+            // }
             return true;
         }
         else if(f[pos].stuff == ' ') { // ' ' is considered a 0
@@ -269,6 +273,7 @@ bool Field::mine(const int &pos) {
                         f[i].stuff = ' ';
                 }
             }
+
             f[pos].mined = false;
             t1 = std::chrono::high_resolution_clock::now();
             mine(pos); //calls mine again because everything has been initialized
