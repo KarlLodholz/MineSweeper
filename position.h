@@ -2,7 +2,7 @@
 #define POSITION_H
 
 struct Position {
-    char stuff;
+    char num;
     bool mined;
     bool flagged;
 private:

@@ -53,7 +53,7 @@ public:
     bool mine(const int &pos);
     bool flag(const int &pos);
     void print(Cursur &c);
-    //array of mines and stuffs later
+    //array of mines and nums later
 
 private:
     int width,height;
@@ -74,7 +74,7 @@ Field::Field(const int &width, const int &height) {
     f = new Position[width*height]();
     //the positions must be initalized now because dynamically allocated arrays of objects dont use the overwritten constructor
     for(int i = 0; i < width*height; i++) {
-        f[i].stuff = '!';
+        f[i].num = '!';
         f[i].flagged = false;
         f[i].mined = false;
     }
@@ -99,7 +99,7 @@ void Field::print(Cursur &c) {
     int size = width*2+3-6-len-5;
     for(int i=0;i<size; i++)
         str += " ";
-    std::cout<<str<<"Time:"<<(f[0].stuff == '!' ? 0 : m_time)<<"\n";
+    std::cout<<str<<"Time:"<<(f[0].num == '!' ? 0 : m_time)<<"\n";
     
     //Board 
     for(int i=0;i<2*width+3;i++)
@@ -109,7 +109,7 @@ void Field::print(Cursur &c) {
         if(i%width == 0) {
             std::cout << BORDER;
         }
-        std::cout<<" "<<(c.pos == i && c.on ? c.icon : (f[i].flagged ? FLAG : (f[i].mined ? f[i].stuff : UNMINED)));
+        std::cout<<" "<<(c.pos == i && c.on ? c.icon : (f[i].flagged ? FLAG : (f[i].mined ? f[i].num : UNMINED)));
         if(i%width == width-1) {
             std::cout << " " << BORDER << "\n";
         }
@@ -140,7 +140,7 @@ bool Field::flag(const int &pos) {
     if(flags.size() == num_mines) {
         won = true;
         for(int i=0; i<flags.size(); i++) {
-            if(f[flags[i]].stuff != MINE)
+            if(f[flags[i]].num != MINE)
                 won = false;
         }
     }
@@ -150,13 +150,13 @@ bool Field::flag(const int &pos) {
 bool Field::mine(const int &pos) {
     if(!f[pos].mined && !f[pos].flagged) {
         f[pos].mined = true;
-        if(f[pos].stuff == MINE) {
+        if(f[pos].num == MINE) {
             if(!safeMoves()) {
                 std::cout<<"unlucky"<<std::endl;
             }
             return true;
         }
-        else if(f[pos].stuff == ZERO) {
+        else if(f[pos].num == ZERO) {
             bool up = false, down = false, left = false, right = false;
             if((pos/width)-1 >= 0) {          //up
                 up = true;
@@ -183,7 +183,7 @@ bool Field::mine(const int &pos) {
             if(right && down)
                 mine(pos + width + 1);
         }
-        else if(f[pos].stuff == '!') { //OCCURS FOR THE FIRST EXCAVATION
+        else if(f[pos].num == '!') { //OCCURS FOR THE FIRST EXCAVATION
             int cntr = 0;
             bool up = false, down = false, left = false, right = false ,valid;
             std::vector<int> a;
@@ -224,55 +224,55 @@ bool Field::mine(const int &pos) {
                     if(p == a[i])
                         valid = false;
                 if(valid) {
-                    f[p].stuff = MINE;
+                    f[p].num = MINE;
                     a.push_back(p);
                     cntr++;
                 }
             }
             
-            //UPDATES THE STUFF FOR EACH POSITION.  THIS IS WHEN THE NUMBERS ARE ASSIGNED
+            //UPDATES THE NUM FOR EACH POSITION.  THIS IS WHEN THE NUMBERS ARE ASSIGNED
             for(int i = 0; i < width*height; i++) {
-                if(f[i].stuff != MINE) {
+                if(f[i].num != MINE) {
                     up = down = left = right = false;
-                    f[i].stuff = '0';
+                    f[i].num = '0';
                     if((i/width)-1 >= 0) {          //up
                         up = true;
-                        if(f[i-width].stuff == MINE)
-                            f[i].stuff = (char)(f[i].stuff+1);
+                        if(f[i-width].num == MINE)
+                            f[i].num = (char)(f[i].num+1);
                     }
                     if((i/width)+1 < height) {      //down
                         down = true;
-                        if(f[i+width].stuff == MINE)
-                            f[i].stuff = (char)(f[i].stuff+1);
+                        if(f[i+width].num == MINE)
+                            f[i].num = (char)(f[i].num+1);
                     }
                     if((i%width)-1 >= 0) {          //left
                         left = true;
-                        if(f[i-1].stuff == MINE)
-                            f[i].stuff = (char)(f[i].stuff+1);
+                        if(f[i-1].num == MINE)
+                            f[i].num = (char)(f[i].num+1);
                     }
                     if((i%width)+1 < width) {       //right
                         right = true;
-                        if(f[i+1].stuff == MINE)
-                            f[i].stuff = (char)(f[i].stuff+1);
+                        if(f[i+1].num == MINE)
+                            f[i].num = (char)(f[i].num+1);
                     }
                     if(left && up) {
-                        if(f[i - width - 1].stuff == MINE)
-                            f[i].stuff = (char)(f[i].stuff+1);
+                        if(f[i - width - 1].num == MINE)
+                            f[i].num = (char)(f[i].num+1);
                     }
                     if(right && up) {
-                        if(f[i - width + 1].stuff == MINE)
-                            f[i].stuff = (char)(f[i].stuff+1);
+                        if(f[i - width + 1].num == MINE)
+                            f[i].num = (char)(f[i].num+1);
                     }
                     if(left && down) {
-                        if(f[i + width - 1].stuff == MINE)
-                            f[i].stuff = (char)(f[i].stuff+1);
+                        if(f[i + width - 1].num == MINE)
+                            f[i].num = (char)(f[i].num+1);
                     }
                     if(right && down) {
-                        if(f[i + width + 1].stuff == MINE)
-                            f[i].stuff = (char)(f[i].stuff+1);
+                        if(f[i + width + 1].num == MINE)
+                            f[i].num = (char)(f[i].num+1);
                     }
-                    if(f[i].stuff == '0')
-                        f[i].stuff = ZERO;
+                    if(f[i].num == '0')
+                        f[i].num = ZERO;
                 }
             }
 
@@ -285,54 +285,79 @@ bool Field::mine(const int &pos) {
 }
 
 bool Field::safeMoves() {
-    //calculates the number of safe moves
-    bool left,right,up,down;
-    int cntr;
+
+    // create copy of field
+    // find where flags should be & place flags
+    // with copied field look for positions that should be guessed, return true if one is found
+
+    //places flags on copy of field
     for(int i = 0; i < width*height; i++) {
-        if(f[i].mined && f[i].stuff != ZERO) {
-            cntr = 0;
-            up = down = left = right = false;
-            if((i/width)-1 >= 0) {          //up
-                up = true;
-                if(!f[i-width].mined)
-                    cntr++;
-            }
-            if((i/width)+1 < height) {     //down
-                down = true;
-                if(!f[i+width].mined)
-                    cntr++;
-            }
-            if((i%width)-1 >= 0) {         //left
-                left = true;
-                if(!f[i-1].mined)
-                    cntr++;
-            }
-            if((i%width)+1 < width) {         //right
-                right = true;
-                if(!f[i+1].mined)
-                    cntr++;
-            }
-            if(up && left) {
-                if(!f[i-width-1].mined)
-                    cntr++;
-            }
-            if(up && right) {
-                if(!f[i-width+1].mined)
-                    cntr++;
-            }
-            if(down && left) {
-                if(!f[i+width-1].mined)
-                    cntr++;
-            }
-            if(down && right) {
-                if(!f[i+width+1].mined)
-                    cntr++;
-            }
-            if(cntr == (int)f[i].stuff-48)  // you have to subtact 48 because '0' - 48 == 0 because ascii table
-                return true;
-            //std::cout<<"\ncntr:"<<cntr<<" pos"<<i<<":"<<f[i].stuff;  
+        if(f[i].mined && f[i].num != ZERO) {
+            //basic look around
+            //1-2 pattern
+            
         }
-    } 
+    }
+
+    //looks for space places to mine
+    for(int i = 0; i < width*height; i++) {
+        if(f[i].mined && f[i].num != ZERO) {
+            //basic look around
+            //1-1 pattern
+            //the 1-1 pattern only really applies to numbers 1-3 (3 shouldnt really happen but it is possible)
+            if(f[i].num <= '1' && f[i].num >= '3') {
+                //if surrounding 
+            }
+        }
+    }
+    
+    // //calculates the number of safe moves
+    // bool left,right,up,down;
+    // int cntr;
+    // for(int i = 0; i < width*height; i++) {
+    //     if(f[i].mined && f[i].num != ZERO) {
+    //         cntr = 0;
+    //         up = down = left = right = false;
+    //         if((i/width)-1 >= 0) {         //up
+    //             up = true;
+    //             if(!f[i-width].mined)
+    //                 cntr++;
+    //         }
+    //         if((i/width)+1 < height) {     //down
+    //             down = true;
+    //             if(!f[i+width].mined)
+    //                 cntr++;
+    //         }
+    //         if((i%width)-1 >= 0) {         //left
+    //             left = true;
+    //             if(!f[i-1].mined)
+    //                 cntr++;
+    //         }
+    //         if((i%width)+1 < width) {      //right
+    //             right = true;
+    //             if(!f[i+1].mined)
+    //                 cntr++;
+    //         }
+    //         if(up && left) {
+    //             if(!f[i-width-1].mined)
+    //                 cntr++;
+    //         }
+    //         if(up && right) {
+    //             if(!f[i-width+1].mined)
+    //                 cntr++;
+    //         }
+    //         if(down && left) {
+    //             if(!f[i+width-1].mined)
+    //                 cntr++;
+    //         }
+    //         if(down && right) {
+    //             if(!f[i+width+1].mined)
+    //                 cntr++;
+    //         }
+    //         if(cntr == (int)f[i].num-48)  // you have to subtact 48 because '0' - 48 == 0 because ascii table
+    //             return true;
+    //     }
+    // } 
     std::cout.flush();
     return false;
 }
